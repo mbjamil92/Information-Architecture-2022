@@ -1,0 +1,40 @@
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` PROCEDURE `updateFacts`()
+BEGIN
+SET @@SESSION.sql_mode='ALLOW_INVALID_DATES';
+#Update Date Dimension
+SET FOREIGN_KEY_CHECKS=0;
+TRUNCATE TABLE  dav6100_db_2_dw.order_line;
+INSERT INTO dav6100_db_2_dw.order_line(order_key, product_key, supplier_key, order_date_key, item_quantity, item_amount)
+SELECT CASE WHEN a.order_id = '' OR a.order_id IS NULL 
+THEN -1
+ELSE  order_key END as 'order_key',
+CASE WHEN a.item_id = '' OR a.item_id IS NULL
+THEN -1
+ELSE product_key END as 'product_key',
+CASE WHEN a.supplier_id = '' OR a.supplier_id IS NULL
+THEN -1
+ELSE supplier_key END as 'supplier_key',
+CASE WHEN a.order_date = '' OR a.order_date IS NULL
+THEN -1
+ELSE date_key END as 'date_key',
+item_quantity,
+item_amount
+FROM (SELECT dav6100_db_2.t_ord_item.ord_id as 'order_id', 
+item_id, 
+sup_id as 'supplier_id', 
+ord_disp_dt as 'order_date', 
+SUM(ord_item_qty) as 'item_quantity',
+SUM(ord_item_amt) as 'item_amount'
+FROM dav6100_db_2.t_ord_item 
+LEFT JOIN dav6100_db_2.t_ord_order ON dav6100_db_2.t_ord_order.ord_id =  dav6100_db_2.t_ord_item.ord_id
+GROUP BY order_id, item_id, sup_id, ord_disp_dt) as a
+LEFT JOIN dav6100_db_2_dw.orders ON a.order_id = dav6100_db_2_dw.orders.order_id
+LEFT JOIN dav6100_db_2_dw.product ON a.item_id = dav6100_db_2_dw.product.item_id 
+LEFT JOIN dav6100_db_2_dw.supplier ON a.supplier_id = dav6100_db_2_dw.supplier.supplier_id
+LEFT JOIN dav6100_db_2_dw.date ON a.order_date = dav6100_db_2_dw.date.date_string
+GROUP BY order_key, product_key,supplier_key,date_key
+ORDER BY order_key, product_key,supplier_key,date_key;
+SET FOREIGN_KEY_CHECKS=1;
+
+END//
