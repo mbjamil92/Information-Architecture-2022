@@ -18,3 +18,13 @@ CREATE TABLE `traffic_tickets_source1` (
   `Court` varchar(100),
   `Source` varchar(100)
   );
+  
+  -- creating 2nd table for data source #2:
+
+DROP TABLE IF EXISTS `vehicle_crashes_source2`;
+CREATE TABLE `vehicle_crashes_source2`(
+  `Year` int,
+  `Violation Description` varchar(500),
+  `Violation Code` varchar(100),
+  `Case Individual ID` int primary key
+  );
