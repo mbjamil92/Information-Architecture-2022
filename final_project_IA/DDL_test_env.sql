@@ -6,25 +6,31 @@ CREATE DATABASE `IA_Final_Project_NY_Transportation_Test` /*!40100 DEFAULT CHARA
 use IA_Final_Project_NY_Transportation_Test;
 DROP TABLE IF EXISTS `traffic_tickets_source1`;
 CREATE TABLE `traffic_tickets_source1` (
-  `Violation Charged Code` varchar(100) primary key,
+  `Violation Charged Code` varchar(100),
   `Violation Description` varchar(500),
   `Violation Year` int,
   `Violation Month` int,
-  `Violation Day of Week` int,
+  `Violation Day of Week` varchar(100),
   `Age at Violation` float,
   `Gender` varchar(100),
-  `State_of License` varchar(100),
+  `State of License` varchar(100),
   `Police Agency` varchar(100),
   `Court` varchar(100),
   `Source` varchar(100)
   );
-  
-  -- creating 2nd table for data source #2:
+  -- testing 1st data source:
+  select * from `traffic_tickets_source1`;
+ 
+ 
+ -- creating 2nd table for data source #2:
 
 DROP TABLE IF EXISTS `vehicle_crashes_source2`;
 CREATE TABLE `vehicle_crashes_source2`(
   `Year` int,
   `Violation Description` varchar(500),
   `Violation Code` varchar(100),
-  `Case Individual ID` int primary key
+  `Case Individual ID` int
   );
+  
+-- testing 2nd data source:
+  select * from `vehicle_crashes_source2`;
